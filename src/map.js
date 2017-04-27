@@ -6,8 +6,8 @@ var svg = d3.select("svg"),
 var disruption = d3.map();
 var opportunity = d3.map();
 // Default Setting 
-var curmap = disruption;
-
+//var curmap = disruption;
+var curmap = opportunity;
 var path = d3.geoPath();
 var opp_toggle = true;
 
@@ -31,11 +31,11 @@ var colorpaths, msaMap, us_copy;
 // .defer(d3.json, "../data/us_msa.json")
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.json, "../disruption-map/data/us_msa.json")
+    .defer(d3.json, "data/us_msa.json")
   
-    .defer(d3.csv, "../disruption-map/data/opportunity.csv", 
+    .defer(d3.csv, "data/opportunity.csv", 
         function (d) { opportunity.set(d.area, d.opportunity);})
-    .defer(d3.csv, "../disruption-map/data/disruption.csv", 
+    .defer(d3.csv, "data/disruption.csv", 
         function (d) { disruption.set(d.area, d.disruption);})
     .await(ready);
 
@@ -43,14 +43,20 @@ d3.queue()
 function fillColor(msaCode, msamap, scale) {
   if (msamap.get(parseInt(msaCode)) == undefined)
      return d3.color("gray");
-
   if (curmap == opportunity)
      return d3.interpolateYlGn(((msamap.get(parseInt(msaCode))-8) / scale)); 
   else 
      return d3.interpolateOrRd(((msamap.get(parseInt(msaCode))/2))); 
 }
+// ------------------------------------------------------------------
+// Change filepaths so they're all relative 
+// 
 
-
+//  - Add more columns to the data file so that you can view more relevant data 
+//  - Finish toggle function, so that given the map name it loads the data 
+//  - Want to change the actual data bound not only the fillcolor function
+//  - Find pretty pop up toggle thingies 
+// ------------------------------------------------------------------
 // @todo make tsv with each county and disruption index
 // # Q: Where does it pass the args us, msa to ready? 
 function ready(error, us, msa) {
@@ -63,11 +69,12 @@ function ready(error, us, msa) {
   
   us_copy = us;
   msaMap.each(function(countyIds, msaCode, map) {
+   // console.log(msaCode)
     var selected = d3.set(countyIds);
     if (curmap.get(parseInt(msaCode)) == undefined)
       console.log("no data");
 
-    colorpaths = g.append("path")
+    g.append("path")
         .datum(topojson.merge(
           us, us.objects.counties.geometries.filter(
               function(d) { return selected.has(d.id); })))
@@ -79,21 +86,50 @@ function ready(error, us, msa) {
             d3.select("#info").text(curmap.get(parseInt(msaCode)));
         })
     });
+  colorpaths = d3.selectAll("path")
 }
 
   function changeView () {
-      // var thepath = svg.selectAll("path")
-      // path.enter().append("path")
-      //       .attr("fill", fillColor(msaCode, curmap, 7))
-      //       .each(function(d) {this._current = d;} );
+    //console.log(colorpaths)
+      curmap = disruption;
+      // colorpaths.each(function(countyIds, msaCode, map){
+      //       console.log(countyIds)
+      //       region = d3.select(this).append("path").attr("fill", "rbg (10, 119, 62")
+      //     // console.log("Hello + " + fillColor(this.id, curmap, 7))
+       
+            
+      //       //this.setAttribute("fill","rbg (10, 119, 62)" )
+      //       //console.log("done")
 
-      // path.transition()
-      //       .attrTween("d", arcTween);
+      // });
+    //   msaMap.each(function(countyIds, msaCode, map) {
+ 
+    //     var selected = d3.set(countyIds);
+    //     if (curmap.get(parseInt(msaCode)) == undefined)
+    //     console.log("no data");
+    //      colorpaths.exit();
+    //     // colorpaths = g.append("path")
+    //     colorpaths.append("path")
+    //      .on("click", function(d) {
+    //         // d3.select("#info").text(curmap.get(parseInt(msaCode)));
+    //         alert("pece")
+    //       })
+    //      .datum(topojson.merge(
+    //      us_copy, us_copy.objects.counties.geometries.filter(
+    //            function(d) { return selected.has(d.id); })))
+    //     .attr("id", msaCode)
+    //     .attr("class", "msa-boundary")
+    //     .attr("fill", fillColor(msaCode, curmap, 7))
+    //     .attr("d", path)
+       
+    // });
 
+      // colorpaths.append("path")
+      // .datum(data)
+      // .attr("d", line);
+      // // path.exit().remove()
 
-      // path.exit().remove()
-
-      ready()
+      // ready()
     
 
   }
