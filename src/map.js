@@ -31,14 +31,20 @@ var div = d3.select("body").append("div")
 
 function toggleMap() {
   var label = d3.select("h1");
+  var buttonlabel = d3.select("#toggle");
   if (currentMap == mapTypes.OPPORTUNITY) {
     label.text("Disruption");
+    buttonlabel.text("Show Combined Map");
     currentMap = mapTypes.DISRUPTION;
-  } else if (currentMap == mapTypes.DISRUPTION) {
+  } 
+  else if (currentMap == mapTypes.DISRUPTION) {
     label.text("Combined");
+    buttonlabel.text("Show Opportunity Map");
     currentMap = mapTypes.COMBINED;
-  } else if (currentMap == mapTypes.COMBINED) {
+  } 
+  else if (currentMap == mapTypes.COMBINED) {
     label.text("Opportunity");
+    buttonlabel.text("Show Disruption Map");
     currentMap = mapTypes.OPPORTUNITY;
   }
   changeMap(currentMap);
@@ -67,14 +73,23 @@ function fillColor(msaCode, map) {
 
   if (map == mapTypes.OPPORTUNITY) {
     var x = d3.scaleLinear().domain([8.5, 17.5]).range([0, 1])
+    var color = d3.scaleSequential(d3.interpolatePiYG);
     return d3.interpolateYlGn(((x(opportunity.get(parseInt(msaCode)))))); 
-  } else if (map == mapTypes.DISRUPTION) {
+  } 
+  else if (map == mapTypes.DISRUPTION) {
     var x = d3.scaleLinear().domain([0, 3.5]).range([0, 1])
+    var color = d3.scaleSequential(d3.interpolatePiYG);
     return d3.interpolateOrRd((x(disruption.get(parseInt(msaCode))))); 
-  } else if (map == mapTypes.COMBINED) {
+  } 
+  else if (map == mapTypes.COMBINED) {
     var x = d3.scaleLinear().domain([5.5, 17]).range([0, 1])
+    var color = d3.scaleSequential(d3.interpolatePiYG);
     return d3.interpolateBlues((x(combined.get(parseInt(msaCode))))); 
   }
+
+  d3.select().append(color);
+
+
 }
 
 // switches the current map displayed to the one provided
@@ -130,23 +145,3 @@ d3.queue()
     createBoundaries(us, msa);
     changeMap(currentMap);
   });
-
-   //---------------------------
-   // Append Groups for counties
-   //---------------------------
-   // svg.append("g")
-   //    .attr("class", "states")
-   //  .selectAll("path")
-   //  .data(topojson.feature(us, us.objects.states).features)
-   //  .enter().append("path")
-   //   // .attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
-   //    .attr("d", path)
-   //---------------------------
-   // Append Groups for counties
-   //---------------------------
-   // svg.append("g")
-   //    .attr("class", "counties")
-   //    .selectAll("path")
-   //    .data(topojson.feature(us, us.objects.counties).features)
-   //    .enter().append("path")
-   //    .attr("d", path)
