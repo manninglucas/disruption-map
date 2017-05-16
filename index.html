@@ -82,7 +82,7 @@
         <p id = "mc"> <strong>Largest <span id="maptype">disruption</span> contributor: </strong><br>
         <span id="jobgroup"></span> </p>
        
-        <p id = "ne"> <strong>Percentage of labor force: </strong><span id="numworkers"></span></p>
+        <p id = "ne" style="display: none"> <strong>Percentage of labor force: </strong><span id="numworkers"></span></p>
         <strong><span id="percentdis"></span> </strong>
         <p id = "pd"> <span id="contr"></span> </p>
         <strong><p > Total Workforce: </strong><span id = "totalWorkers"></span> </p>
@@ -90,6 +90,31 @@
       </div>
     </div>
   </div>
+  <h2>
+    Disruption
+  </h2>
+  <p>
+One of the most important measures we sought to track was job disruption, or the decrease in job opportunities across various regions of the US. We calculated a disruption index by taking the number of projected  additional jobs divided by the number of workers employed in an area, so that the index represented the decrease per person of that country or the percentage of people who were expected to lose their jobs. 
+ 
+ </p>
+  <p>
+
+Another feature that we incorporated into our map was the largest disruption contributor, or the industry that contributed most to a region's disruption; for the opportunity map there is analogous value. One interesting point is that in a large portion of the regions, the industry contributing most to disruption was Switchboard Operators, accounting for roughly 80 of the ~600 counties or around 15%. This occupation is one that clearly involves a lot of manual work, and workers in this area may be especially susceptible to having their jobs replaced by a machine or automated system. This insight is one that has been frequently voiced in recent articles, including "As Robots Grow Smarter, American Workers Struggle to Keep Up", this piece, "Rise of the machines: Fear robots, not China or Mexico", and many other similar ones. Here, the data from our map seems to confirm this growing paranoia, although other values in our corresponding opportunity map show that there is still plenty of room for growth in other sectors to possibly make up for this. 
+
+  </p>
+  <h2>
+    Opportunity
+  </h2>
+  <p>
+Conversely, we also measured opportunity, which was defined similarly to disruption. The opportunity number is the the sum of each industry in each area which has a positive projected labor, multiplied it by its projection. The whole number is divided by the total number of people employed in that area to give a final percentage of opportunity. Essentially, opportunity represents, the percentage of people who are working in jobs that are expected to grow in the next ten years.
+  </p>
+  <p>
+    There are a few key areas of interest on this map that stand out in visualized data. One is the ubiquity of growth in healthcare assistance and professional jobs. Over eighty percent of areas have some sort of healthcare assitant (e.g occupational therapist, nurse, physical therapist) listed as the top area with opportunity. This result isn’t all that surprising though, considering health care is the second leading contributor to GDP after finance. 
+
+  </p>
+  <p>
+    The second most frequent, contributor to opportunity was wind turbine technicians, which could signal an area with potential, especially with the forecasted rise in renewable technologies.
+  </p>
 
   <footer class="footer">
     <div class="row justify-content-start">

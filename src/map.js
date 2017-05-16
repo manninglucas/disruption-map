@@ -24,6 +24,7 @@ class Choropleth {
   }
 
   createLinearScale() {
+    if (this.name == "Disruption") this.max = 3;
     this.linearScale = d3.scaleLinear().domain([this.min, this.max]).range([0, 1])
   }
 
@@ -242,7 +243,7 @@ function fillMap () {
 function createBoundaries(us, msa) {
   msaMap = d3.map(msa);
   var g = svg.append("g").attr("class", "msa");
-  console.log(projDict);
+  console.log(disruptDict);
   msaMap.each(function(countyIds, msaCode, map) {
     var selected = d3.set(countyIds);
     g.append("path")
@@ -282,38 +283,32 @@ function createBoundaries(us, msa) {
       })
       .on("click", function(d) {
           d3.select('#jobgroup').text(currentMap.greatestSectors(parseInt(msaCode)));
-          //d3.select('#percentdis').text(currentMap.greatestSectors(parseInt(msaCode)));
-          console.log(currentMap.name)
-          console.log((projDict[msaCode][currentMap.name])/oppDict[msaCode])
-          console.log((oppDict[msaCode]))
-          if (projDict[msaCode][currentMap.name] < 0){
-                d3.select('#percentdis').text(
-                  "Percent contribution to disruption");
-                var percentContr = parseFloat(projDict[msaCode][currentMap.name]/disruptDict[msaCode])*100;
-                percentContr = percentContr.toFixed(3);
-                d3.select('#contr').text(percentContr + "%");
-              }
-          else{
-                d3.select('#percentdis').text(
-                  "Percent contribution to opportunity");
-                var percentContr = parseFloat(projDict[msaCode][currentMap.name]/oppDict[msaCode])*100;
-                percentContr = percentContr.toFixed(3);
-                d3.select('#contr').text(percentContr + "%");
+          let msaNum = parseInt(msaCode);
+          if (currentMap.name != "Opportunity" && currentMap.name != "Disruption") {
+            if (projDict[msaNum][currentMap.name] < 0){
+                  d3.select('#percentdis').text("Percent contribution to disruption");
+                  var percentContr = parseFloat(projDict[msaNum][currentMap.name]/disruptDict[msaNum])*100;
+                  percentContr = Math.abs(percentContr.toFixed(3));
+                  d3.select('#contr').text(percentContr + "%");
+                }
+            else{
+                  d3.select('#percentdis').text("Percent contribution to opportunity");
+                  var percentContr = parseFloat(projDict[msaNum][currentMap.name]/oppDict[msaNum])*100;
+                  percentContr = percentContr.toFixed(3);
+                  d3.select('#contr').text(percentContr + "%");
+            }
+  
           }
-              
-          
+
           text = parseFloat(currentMap.value(parseInt(msaCode)))*100;
           text = text.toFixed(2);
-          console.log(text);
-          // d3.select('#contr').text((projDict[msaCode][currentMap.name]/ disruptDict[msaCode]).toFixed(5)*100);
           d3.select("#numworkers").text(text + "%");
-          d3.select('#percentwork').text((currentMap.value(parseInt(msaCode))/employed[msaCode]).toFixed(4)*100);
+          d3.select('#percentwork').text((currentMap.value(parseInt(msaCode))/employed[msaNum]).toFixed(4)*100);
           d3.select("#msa").text(msaCode);
-          d3.select('#totalWorkers').text(employed[msaCode]);
+          d3.select('#totalWorkers').text(employed[msaNum]);
       })
   });
 }
-console.log(currentMap.name)
 
 // Main =================================================================
 
@@ -330,7 +325,7 @@ d3.queue()
   .defer(d3.csv, "../data/disruption.csv", 
       function (d) { 
         maps.DISRUPTION.addData(d.area, {"value" : d.disruption, "greatest_sector" : d.greatest_sector});
-        disruptDict[d.area] = d.disrupt;
+        disruptDict[d.area] = d.dis;
         employed[d.area] = d.totalEmployed;
       })
   .defer(d3.csv, "../data/combined.csv",
@@ -357,14 +352,10 @@ d3.queue()
   .defer(d3.csv, "../data/job_employments.csv",
       function (d) { 
         for (job in d){
-
- 
             if (!(job in maps.OCCUPATION)){ 
-                 
                 // change color to something distinctive
                  var occMap = new Choropleth(job, d3.interpolateRdPu);
                  maps.OCCUPATION[job] = occMap;
-                 console.log(maps.OCCUPATION[job]);
                }
 
           maps.OCCUPATION[job].addData(d.MSA, {"value": d[job]/employed[d.MSA]});
@@ -386,36 +377,5 @@ d3.queue()
     createBoundaries(us, msa);
     fillMap(currentMap);
     currentMap.generateKey();
-
-
   });
-
-
-  console.log(disruptDict);
-  console.log(oppDict);
-
-
-
-
-
-
-
-   //---------------------------
-   // Append Groups for counties
-   //---------------------------
-   // svg.append("g")
-   //    .attr("class", "states")
-   //  .selectAll("path")
-   //  .data(topojson.feature(us, us.objects.states).features)
-   //  .enter().append("path")
-   //   // .attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
-   //    .attr("d", path)
-   //---------------------------
-   // Append Groups for counties
-   //---------------------------
-   // svg.append("g")
-   //    .attr("class", "counties")
-   //    .selectAll("path")
-   //    .data(topojson.feature(us, us.objects.counties).features)
-   //    .enter().append("path")
-   //    .attr("d", path)
+  
